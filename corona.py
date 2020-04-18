@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -50,15 +52,17 @@ data_series = [data_infected, data_recovered, data_deaths]
 
 Path(cachedir).mkdir(exist_ok=True)
 
-breal = {'infected': [], 'recovered': [], 'deaths': []}
+breal  = {'infected': [], 'recovered': [], 'deaths': []}
+dbreal = {'infected': [], 'recovered': [], 'deaths': []}
 
 for data in data_series:
     try:
-        # update cache if not done today
         mtime = os.path.getmtime(data.file)
-        if datetime.datetime.today().date() > datetime.datetime.fromtimestamp(mtime).date():
+        # update cache if it is older than 6 hours
+        if time.time() - mtime > 21600:
             data.update = 'outdated'
             print("Cache file " + data.file + " outdated, updating...")
+
     except OSError:
         # update cache if file does not exist
         data.update = 'nofile'
@@ -73,7 +77,7 @@ for data in data_series:
         with open(data.file, 'wb') as outfile:
             shutil.copyfileobj(response, outfile)
     else:
-        print("Cache file" + data.file + " is up-to-date")
+        print("Cache file " + data.file + " is up-to-date (" + time.ctime(mtime) + ")")
 
     found_line = False
     with open(data.file, newline='') as csvfile:
@@ -92,7 +96,11 @@ for data in data_series:
 
 n = len(breal['infected'])
 x = list(range(1, n+1))
-    
+
+for key in breal:
+    for i in range(1, n):
+        dbreal[key].append(breal[key][i]-breal[key][i-1])
+
 if figtype != 'stacked':
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
@@ -109,41 +117,56 @@ if figtype != 'stacked':
     ax1.plot(x, breal[figtype], '.-')
     #plt.xlim(1, n)
     ax1.set_title('linear')
-    ax1.legend('real')
+    #ax1.legend('real')
     ax1.grid()
     
     ax2.semilogy(x, breal[figtype], '.-')
     #plt.xlim(1, n)
     ax2.set_title('logarithmisch')
-    ax2.legend('real')
+    #ax2.legend('real')
     ax2.grid()
     
     plt.show()
 else:
-    fig, ax1 = plt.subplots(1, 1)
+    fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
     plt.setp(ax1, xticks=x, xlabel='Tage')
+    plt.setp(ax2, xticks=x, xlabel='Tage')
     
     labels = ax1.xaxis.get_ticklabels()
     for label in labels[::2]:
         label.set_visible(False)
     
+    labels = ax2.xaxis.get_ticklabels()
+    for label in labels[::2]:
+        label.set_visible(False)
+
     y1 = breal['infected']
     y2 = np.add(breal['recovered'], breal['deaths'])
     y3 = breal['deaths']
+    y4 = np.divide(dbreal['infected'], np.subtract(y1[1:], y2[1:]))
 
-    ax1.plot(x, y1, label='active')
-    ax1.plot(x, y2, label='recovered')
-    ax1.plot(x, y3, label='deaths')
+    ax1.plot(x, y1, label='active', color='tab:blue')
+    ax1.plot(x, y2, label='recovered', color='tab:green')
+    ax1.plot(x, y3, label='deaths', color='red')
+    ax1.plot(x[1:], y4, label='change active %', color='black')
 
-    ax1.fill_between(x, y1, y2)
-    ax1.fill_between(x, y2, y3)
-    ax1.fill_between(x, y3)
+    ax1.fill_between(x, y1, y2, color='tab:blue')
+    ax1.fill_between(x, y2, y3, color='tab:green')
+    ax1.fill_between(x, y3, color='red')
 
     #plt.xlim(1, n)
-    ax1.set_title('cumulated')
+    ax1.set_title('cumulated view')
     ax1.legend()
     ax1.grid()
     
+    ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')  
+    ax2.plot(x[1:], dbreal['recovered'], label='recovered', color='tab:green')
+    ax2.plot(x[1:], dbreal['deaths'], label='deaths', color='red')
+
+    ax2.set_title('daily view')
+    ax2.legend()
+    ax2.grid()
+
     plt.show()
     
