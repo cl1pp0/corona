@@ -13,7 +13,7 @@ import argparse
 from pathlib import Path
 
 cachedir = "cache/"
-base_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/" 
+base_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
 
 class DataSeries:
     def __init__(self, name, file):
@@ -67,7 +67,7 @@ for data in data_series:
         # update cache if file does not exist
         data.update = 'nofile'
         print("Cache file " + data.file + " missing, updating...")
-    
+
     if args.update == True:
         data.update = 'force'
         print("Updating cache file " + data.file + " (forced by user)")
@@ -89,7 +89,7 @@ for data in data_series:
                 breal[data.name] = [int(num_str) for num_str in line[43:]]
                 found_line = True
                 break
-    
+
     if not found_line:
         print("error: country \"" + country + "\" or state \"" + state + "\" not found in file " + cachefile + " .")
         exit(1)
@@ -105,38 +105,38 @@ if figtype != 'stacked':
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
     plt.setp((ax1, ax2), xticks=x, xlabel='Tage')
-    
+
     labels = ax1.xaxis.get_ticklabels()
     for label in labels[::2]:
         label.set_visible(False)
-    
+
     labels = ax2.xaxis.get_ticklabels()
     for label in labels[::2]:
         label.set_visible(False)
-    
+
     ax1.plot(x, breal[figtype], '.-')
     #plt.xlim(1, n)
     ax1.set_title('linear')
     #ax1.legend('real')
     ax1.grid()
-    
+
     ax2.semilogy(x, breal[figtype], '.-')
     #plt.xlim(1, n)
     ax2.set_title('logarithmisch')
     #ax2.legend('real')
     ax2.grid()
-    
+
     plt.show()
 else:
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
     plt.setp(ax1, xticks=x, xlabel='Tage')
     plt.setp(ax2, xticks=x, xlabel='Tage')
-    
+
     labels = ax1.xaxis.get_ticklabels()
     for label in labels[::2]:
         label.set_visible(False)
-    
+
     labels = ax2.xaxis.get_ticklabels()
     for label in labels[::2]:
         label.set_visible(False)
@@ -159,8 +159,8 @@ else:
     ax1.set_title('cumulated view')
     ax1.legend()
     ax1.grid()
-    
-    ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')  
+
+    ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')
     ax2.plot(x[1:], dbreal['recovered'], label='recovered', color='tab:green')
     ax2.plot(x[1:], dbreal['deaths'], label='deaths', color='red')
 
@@ -169,4 +169,4 @@ else:
     ax2.grid()
 
     plt.show()
-    
+
