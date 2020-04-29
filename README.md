@@ -1,6 +1,9 @@
 # corona.py
 ## Visualize covid-19 cases (data taken from Johns Hopkins git repo)
 
+Data source:
+[CSSEGISandData/COVID-19](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series)
+
 ```
 usage: corona.py [-h] [-t TYPE] [-c COUNTRY] [-s STATE] [-u]
 
