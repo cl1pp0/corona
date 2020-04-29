@@ -29,7 +29,7 @@ $ ./corona.py -c 'US'
 ![Figure_1](https://user-images.githubusercontent.com/28967414/80623831-15bb5400-8a4b-11ea-898a-dbaacd58e400.png)
 
 ```
-$ ./corona.py -t 'infected'
+$ ./corona.py -c 'US' -t 'infected'
 ```
 
 ![Figure_2](https://user-images.githubusercontent.com/28967414/80623829-1522bd80-8a4b-11ea-86a0-9cc3cbb8ecb8.png)
