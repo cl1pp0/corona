@@ -96,6 +96,7 @@ for data in data_series:
 
 n = len(breal['infected'])
 x = list(range(1, n+1))
+xt = x[0::7]
 
 for key in breal:
     for i in range(1, n):
@@ -104,15 +105,15 @@ for key in breal:
 if figtype != 'stacked':
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
-    plt.setp((ax1, ax2), xticks=x, xlabel='Tage')
+    plt.setp((ax1, ax2), xticks=xt, xlabel='days')
 
     labels = ax1.xaxis.get_ticklabels()
-    for label in labels[::2]:
-        label.set_visible(False)
+#    for label in labels[::2]:
+#        label.set_visible(False)
 
     labels = ax2.xaxis.get_ticklabels()
-    for label in labels[::2]:
-        label.set_visible(False)
+#    for label in labels[::2]:
+#        label.set_visible(False)
 
     ax1.plot(x, breal[figtype], '.-')
     #plt.xlim(1, n)
@@ -122,7 +123,7 @@ if figtype != 'stacked':
 
     ax2.semilogy(x, breal[figtype], '.-')
     #plt.xlim(1, n)
-    ax2.set_title('logarithmisch')
+    ax2.set_title('logarithmic')
     #ax2.legend('real')
     ax2.grid()
 
@@ -130,16 +131,16 @@ if figtype != 'stacked':
 else:
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
-    plt.setp(ax1, xticks=x, xlabel='Tage')
-    plt.setp(ax2, xticks=x, xlabel='Tage')
+    plt.setp(ax1, xticks=xt, xlabel='days')
+    plt.setp(ax2, xticks=xt, xlabel='days')
 
     labels = ax1.xaxis.get_ticklabels()
-    for label in labels[::2]:
-        label.set_visible(False)
+#    for label in labels[::2]:
+#        label.set_visible(False)
 
     labels = ax2.xaxis.get_ticklabels()
-    for label in labels[::2]:
-        label.set_visible(False)
+#    for label in labels[::2]:
+#        label.set_visible(False)
 
     y1 = breal['infected']
     y2 = np.add(breal['recovered'], breal['deaths'])
