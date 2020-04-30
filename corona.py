@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import EngFormatter
 import numpy as np
 import math
 import csv
@@ -102,64 +103,39 @@ for key in breal:
     for i in range(1, n):
         dbreal[key].append(breal[key][i]-breal[key][i-1])
 
-if figtype != 'stacked':
+if figtype == 'stacked':
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
-    plt.setp((ax1, ax2), xticks=xt, xlabel='days')
-
-    labels = ax1.xaxis.get_ticklabels()
-#    for label in labels[::2]:
-#        label.set_visible(False)
-
-    labels = ax2.xaxis.get_ticklabels()
-#    for label in labels[::2]:
-#        label.set_visible(False)
-
-    ax1.plot(x, breal[figtype], '.-')
-    #plt.xlim(1, n)
-    ax1.set_title('linear')
-    #ax1.legend('real')
-    ax1.grid()
-
-    ax2.semilogy(x, breal[figtype], '.-')
-    #plt.xlim(1, n)
-    ax2.set_title('logarithmic')
-    #ax2.legend('real')
-    ax2.grid()
-
-    plt.show()
-else:
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
-    plt.setp(ax1, xticks=xt, xlabel='days')
+    plt.setp(ax1, xticks=xt, xlabel='days', ylabel='cases')
     plt.setp(ax2, xticks=xt, xlabel='days')
 
-    labels = ax1.xaxis.get_ticklabels()
-#    for label in labels[::2]:
-#        label.set_visible(False)
+    ax3 = ax1.twinx()
+    plt.setp(ax3, ylabel='%')
 
-    labels = ax2.xaxis.get_ticklabels()
-#    for label in labels[::2]:
-#        label.set_visible(False)
+    eng_fmt = EngFormatter(sep='')
+    ax1.yaxis.set_major_formatter(eng_fmt)
+    ax2.yaxis.set_major_formatter(eng_fmt)
 
     y1 = breal['infected']
     y2 = np.add(breal['recovered'], breal['deaths'])
     y3 = breal['deaths']
-    y4 = np.divide(dbreal['infected'], np.subtract(y1[1:], y2[1:]))
+    y4 = np.multiply(np.divide(dbreal['infected'], np.subtract(y1[1:], y2[1:])), 100)
 
     ax1.plot(x, y1, label='active', color='tab:blue')
     ax1.plot(x, y2, label='recovered', color='tab:green')
     ax1.plot(x, y3, label='deaths', color='red')
-    ax1.plot(x[1:], y4, label='change active %', color='black')
+
+    ax3.plot(x[1:], y4, label='change active %', color='black')
 
     ax1.fill_between(x, y1, y2, color='tab:blue')
     ax1.fill_between(x, y2, y3, color='tab:green')
     ax1.fill_between(x, y3, color='red')
 
-    #plt.xlim(1, n)
     ax1.set_title('cumulated view')
     ax1.legend()
     ax1.grid()
+
+    ax3.legend()
 
     ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')
     ax2.plot(x[1:], dbreal['recovered'], label='recovered', color='tab:green')
@@ -167,6 +143,28 @@ else:
 
     ax2.set_title('daily view')
     ax2.legend()
+    ax2.grid()
+    
+    #fig.tight_layout()
+    plt.show()
+
+else:
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
+    plt.setp((ax1, ax2), xticks=xt, xlabel='days')
+
+    eng_fmt = EngFormatter(sep='')
+    ax1.yaxis.set_major_formatter(eng_fmt)
+    # doesn't work with log scale - didn't figure out why
+    ax2.yaxis.set_major_formatter(eng_fmt)
+
+    ax1.plot(x, breal[figtype], '.-')
+    ax1.set_title('linear')
+    ax1.grid()
+
+    ax2.set_yscale('log')
+    ax2.plot(x, breal[figtype], '.-')
+    ax2.set_title('logarithmic')
     ax2.grid()
 
     plt.show()
