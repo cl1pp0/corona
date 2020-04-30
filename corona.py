@@ -107,7 +107,7 @@ if figtype == 'stacked':
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
     plt.setp(ax1, xticks=xt, xlabel='days', ylabel='cases')
-    plt.setp(ax2, xticks=xt, xlabel='days')
+    plt.setp(ax2, xticks=xt, xlabel='days', ylabel='cases')
 
     ax3 = ax1.twinx()
     plt.setp(ax3, ylabel='%')

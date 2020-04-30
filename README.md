@@ -25,12 +25,10 @@ optional arguments:
 ```
 $ ./corona.py -c 'US'
 ```
-
-![Figure_1](https://user-images.githubusercontent.com/28967414/80623831-15bb5400-8a4b-11ea-898a-dbaacd58e400.png)
+![Figure_1](https://user-images.githubusercontent.com/28967414/80757493-8a1df200-8b34-11ea-8ea8-bed1d83bb69a.png)
 
 ```
 $ ./corona.py -c 'US' -t 'infected'
 ```
-
-![Figure_2](https://user-images.githubusercontent.com/28967414/80623829-1522bd80-8a4b-11ea-86a0-9cc3cbb8ecb8.png)
+![Figure_2](https://user-images.githubusercontent.com/28967414/80757488-89855b80-8b34-11ea-9315-982580908a4c.png)
 
