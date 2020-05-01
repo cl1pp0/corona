@@ -116,34 +116,35 @@ if figtype == 'stacked':
     ax1.yaxis.set_major_formatter(eng_fmt)
     ax2.yaxis.set_major_formatter(eng_fmt)
 
-    y1 = breal['infected']
-    y2 = np.add(breal['recovered'], breal['deaths'])
+    y1 = np.subtract(breal['infected'], np.add(breal['recovered'], breal['deaths']))
+    y2 = breal['recovered']
     y3 = breal['deaths']
-    y4 = np.multiply(np.divide(dbreal['infected'], np.subtract(y1[1:], y2[1:])), 100)
+    y4 = np.multiply(np.divide(dbreal['infected'], y1[1:]), 100)
 
-    ax1.plot(x, y1, label='active', color='tab:blue')
-    ax1.plot(x, y2, label='recovered', color='tab:green')
-    ax1.plot(x, y3, label='deaths', color='red')
+    labels = ['deaths', 'recovered', 'active']
+    colors = ['red', 'tab:green', 'tab:blue']
+    ax1.stackplot(x, y3, y2, y1, colors=colors, labels=labels)
+    ax1.yaxis.tick_right()
+    ax1.yaxis.set_label_position('right')
 
     ax3.plot(x[1:], y4, label='change active %', color='black')
-
-    ax1.fill_between(x, y1, y2, color='tab:blue')
-    ax1.fill_between(x, y2, y3, color='tab:green')
-    ax1.fill_between(x, y3, color='red')
+    ax3.yaxis.tick_left()
+    ax3.yaxis.set_label_position('left')
 
     ax1.set_title('cumulated view')
-    ax1.legend()
-    ax1.grid()
-
-    ax3.legend()
+    ax1.grid(alpha=0.5)
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(reversed(handles), reversed(labels), loc='upper right')
+    ax3.legend(loc='upper left')
 
     ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')
     ax2.plot(x[1:], dbreal['recovered'], label='recovered', color='tab:green')
     ax2.plot(x[1:], dbreal['deaths'], label='deaths', color='red')
 
     ax2.set_title('daily view')
+
     ax2.legend()
-    ax2.grid()
+    ax2.grid(alpha=0.5)
     
     #fig.tight_layout()
     plt.show()
@@ -160,12 +161,12 @@ else:
 
     ax1.plot(x, breal[figtype], '.-')
     ax1.set_title('linear')
-    ax1.grid()
+    ax1.grid(alpha=0.5)
 
     ax2.set_yscale('log')
     ax2.plot(x, breal[figtype], '.-')
     ax2.set_title('logarithmic')
-    ax2.grid()
+    ax2.grid(alpha=0.5)
 
     plt.show()
 
