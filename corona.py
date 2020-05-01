@@ -92,7 +92,7 @@ for data in data_series:
                 break
 
     if not found_line:
-        print("error: country \"" + country + "\" or state \"" + state + "\" not found in file " + cachefile + " .")
+        print("error: country \"" + country + "\" or state \"" + state + "\" not found in file " + data.file + " .")
         exit(1)
 
 n = len(breal['infected'])
@@ -127,15 +127,15 @@ if figtype == 'stacked':
     ax1.yaxis.tick_right()
     ax1.yaxis.set_label_position('right')
 
-    ax3.plot(x[1:], y4, label='change active %', color='black')
+    ax3.plot(x[1:], y4, label='change active %', color='grey')
     ax3.yaxis.tick_left()
     ax3.yaxis.set_label_position('left')
 
     ax1.set_title('cumulated view')
     ax1.grid(alpha=0.5)
     handles, labels = ax1.get_legend_handles_labels()
-    ax1.legend(reversed(handles), reversed(labels), loc='upper right')
-    ax3.legend(loc='upper left')
+    ax1.legend(reversed(handles), reversed(labels), loc='upper left')
+    ax3.legend(loc='upper right')
 
     ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')
     ax2.plot(x[1:], dbreal['recovered'], label='recovered', color='tab:green')
@@ -143,7 +143,7 @@ if figtype == 'stacked':
 
     ax2.set_title('daily view')
 
-    ax2.legend()
+    ax2.legend(loc='upper left')
     ax2.grid(alpha=0.5)
     
     #fig.tight_layout()
