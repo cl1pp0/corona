@@ -26,8 +26,10 @@ class DataSeries:
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--type", type=str, help="type of figure to be shown (one of 'stacked', 'infected', 'deaths', 'recovered'), default = 'stacked'")
 parser.add_argument("-c", "--country", type=str, help="country, default = 'Germany'")
+parser.add_argument("-l", "--list", help="list all available countries and their states (overrides -c, -s, -t)", action="store_true")
 parser.add_argument("-s", "--state", type=str, help="state, default = ''")
 parser.add_argument("-u", "--update", help="force update of cache file (even if it is not outdated)", action="store_true")
+parser.add_argument("-v", "--verbose", help="verbose output: print data series and cache info to stdout", action="store_true")
 args = parser.parse_args()
 
 if not args.type:
@@ -62,34 +64,48 @@ for data in data_series:
         # update cache if it is older than 6 hours
         if time.time() - mtime > 21600:
             data.update = 'outdated'
-            print("Cache file " + data.file + " outdated, updating...")
+            if args.verbose:
+                print("Cache file " + data.file + " outdated, updating...")
 
     except OSError:
         # update cache if file does not exist
         data.update = 'nofile'
-        print("Cache file " + data.file + " missing, updating...")
+        if args.verbose:
+            print("Cache file " + data.file + " missing, updating...")
 
     if args.update == True:
         data.update = 'force'
-        print("Updating cache file " + data.file + " (forced by user)")
+        if args.verbose:
+            print("Updating cache file " + data.file + " (forced by user)")
 
     if data.update:
         response = urllib.request.urlopen(data.url)
         with open(data.file, 'wb') as outfile:
             shutil.copyfileobj(response, outfile)
     else:
-        print("Cache file " + data.file + " is up-to-date (" + time.ctime(mtime) + ")")
+        if args.verbose:
+            print("Cache file " + data.file + " is up-to-date (" + time.ctime(mtime) + ")")
 
     found_line = False
     with open(data.file, newline='') as csvfile:
         cr = csv.reader(csvfile)
-        for line in cr:
-            if line[1] == country and line[0] == state:
-                print(', '.join(line))
-                # begin at 2020-03-01
-                breal[data.name] = [int(num_str) for num_str in line[43:]]
-                found_line = True
-                break
+        if args.list:
+            next(cr)
+            for line in cr:
+                if line[0]:
+                    print(line[1] + "; " + line[0])
+                else:
+                    print(line[1])
+            exit(0)
+        else:
+            for line in cr:
+                if line[1] == country and line[0] == state:
+                    if args.verbose:
+                        print(', '.join(line))
+                    # begin at 2020-03-01
+                    breal[data.name] = [int(num_str) for num_str in line[43:]]
+                    found_line = True
+                    break
 
     if not found_line:
         print("error: country \"" + country + "\" or state \"" + state + "\" not found in file " + data.file + " .")
@@ -145,7 +161,7 @@ if figtype == 'stacked':
 
     ax2.legend(loc='upper left')
     ax2.grid(alpha=0.5)
-    
+
     #fig.tight_layout()
     plt.show()
 
