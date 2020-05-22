@@ -135,7 +135,12 @@ if figtype == 'stacked':
     y1 = np.subtract(breal['infected'], np.add(breal['recovered'], breal['deaths']))
     y2 = breal['recovered']
     y3 = breal['deaths']
-    y4 = np.multiply(np.divide(dbreal['infected'], y1[1:]), 100)
+
+    y4 = []
+    for i in range(1, n):
+        y4.append(y1[i] - y1[i-1])
+
+    y4 = np.multiply(np.divide(y4, y1[1:]), 100)
 
     labels = ['deaths', 'recovered', 'active']
     colors = ['red', 'tab:green', 'tab:blue']
