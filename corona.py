@@ -141,6 +141,7 @@ if figtype == 'stacked':
         y4.append(y1[i] - y1[i-1])
 
     y4 = np.multiply(np.divide(y4, y1[1:]), 100)
+    z = np.zeros(n)
 
     labels = ['deaths', 'recovered', 'active']
     colors = ['red', 'tab:green', 'tab:blue']
@@ -149,6 +150,7 @@ if figtype == 'stacked':
     ax1.yaxis.set_label_position('right')
 
     ax3.plot(x[1:], y4, label='change active %', color='grey')
+    ax3.plot(x, z, color='black', linestyle=':')
     ax3.yaxis.tick_left()
     ax3.yaxis.set_label_position('left')
 
