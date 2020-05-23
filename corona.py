@@ -121,7 +121,7 @@ for key in breal:
 
 if figtype == 'stacked':
     fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle('COVID-19 ' + figtype + ' since 2020-03-01 ' + state + ' ' + country, fontsize=16)
+    fig.suptitle('COVID-19 cases since 2020-03-01 ' + state + ' ' + country + ' (updated ' + time.ctime(mtime) + ')', fontsize=14)
     plt.setp(ax1, xticks=xt, xlabel='days', ylabel='cases')
     plt.setp(ax2, xticks=xt, xlabel='days', ylabel='cases')
 
@@ -148,11 +148,13 @@ if figtype == 'stacked':
     ax1.stackplot(x, y3, y2, y1, colors=colors, labels=labels)
     ax1.yaxis.tick_right()
     ax1.yaxis.set_label_position('right')
+    ax1.autoscale(enable=True, axis='x', tight=True)
 
     ax3.plot(x[1:], y4, label='change active %', color='grey')
     ax3.plot(x, z, color='black', linestyle=':')
     ax3.yaxis.tick_left()
     ax3.yaxis.set_label_position('left')
+    ax3.autoscale(enable=True, axis='x', tight=True)
 
     ax1.set_title('cumulated view')
     ax1.grid(alpha=0.5)
@@ -163,6 +165,7 @@ if figtype == 'stacked':
     ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')
     ax2.plot(x[1:], dbreal['recovered'], label='recovered', color='tab:green')
     ax2.plot(x[1:], dbreal['deaths'], label='deaths', color='red')
+    ax2.autoscale(enable=True, axis='x', tight=True)
 
     ax2.set_title('daily view')
 
