@@ -142,7 +142,10 @@ if figtype == 'stacked':
     for i in range(1, n):
         y4.append(y1[i] - y1[i-1])
 
+    old_err = np.geterr()
+    np.seterr(divide='ignore', invalid='ignore')
     y4 = np.multiply(np.divide(y4, y1[1:]), 100)
+    np.seterr(**old_err)
     z = np.zeros(n)
 
     labels = ['active', 'recovered', 'deaths']
