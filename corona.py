@@ -13,7 +13,7 @@ import datetime
 import argparse
 from pathlib import Path
 
-cachedir = "cache/"
+cachedir = str(Path.home()) + "/.cache/corona.py/"
 base_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
 
 class DataSeries:
@@ -53,7 +53,7 @@ data_deaths    = DataSeries('deaths', 'time_series_covid19_deaths_global.csv')
 
 data_series = [data_infected, data_recovered, data_deaths]
 
-Path(cachedir).mkdir(exist_ok=True)
+Path(cachedir).mkdir(parents=True, exist_ok=True)
 
 breal  = {'infected': [], 'recovered': [], 'deaths': []}
 dbreal = {'infected': [], 'recovered': [], 'deaths': []}
@@ -82,6 +82,8 @@ for data in data_series:
         response = urllib.request.urlopen(data.url)
         with open(data.file, 'wb') as outfile:
             shutil.copyfileobj(response, outfile)
+            mtime = os.path.getmtime(data.file)
+
     else:
         if args.verbose:
             print("Cache file " + data.file + " is up-to-date (" + time.ctime(mtime) + ")")
@@ -143,9 +145,9 @@ if figtype == 'stacked':
     y4 = np.multiply(np.divide(y4, y1[1:]), 100)
     z = np.zeros(n)
 
-    labels = ['deaths', 'recovered', 'active']
-    colors = ['red', 'tab:green', 'tab:blue']
-    ax1.stackplot(x, y3, y2, y1, colors=colors, labels=labels)
+    labels = ['active', 'recovered', 'deaths']
+    colors = ['tab:blue', 'tab:green', 'red']
+    ax1.stackplot(x, y1, y2, y3, colors=colors, labels=labels)
     ax1.yaxis.tick_right()
     ax1.yaxis.set_label_position('right')
     ax1.autoscale(enable=True, axis='x', tight=True)
@@ -159,7 +161,7 @@ if figtype == 'stacked':
     ax1.set_title('cumulated view')
     ax1.grid(alpha=0.5)
     handles, labels = ax1.get_legend_handles_labels()
-    ax1.legend(reversed(handles), reversed(labels), loc='upper left')
+    ax1.legend(handles, labels, loc='upper left')
     ax3.legend(loc='upper right')
 
     ax2.plot(x[1:], dbreal['infected'], label='active', color='tab:blue')
